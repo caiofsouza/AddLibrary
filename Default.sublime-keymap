@@ -1,0 +1,10 @@
+[
+	{
+	    "keys": ["ctrl+alt+a"],
+	    "command": "add_library"
+	},
+    {
+        "keys": ["ctrl+alt+f"],
+        "command": "search_library"
+    }
+]

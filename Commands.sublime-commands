@@ -1,0 +1,12 @@
+[
+	{
+	    "caption": "[AddLibrary]: Add Library",
+	    "command": "add_library"
+	},
+    {
+        "caption": "[AddLibrary]: Search Library",
+        "command": "search_library"
+    }
+]
+
+

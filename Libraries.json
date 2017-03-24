@@ -1,0 +1,113 @@
+[
+	{
+		"search_name": "vue",
+		"name": "Vue.js"
+	},
+	{
+		"search_name": "vuex",
+		"name": "Vuex",
+		"dependencies": ["vue"]
+	},
+	{
+		"search_name": "vue-resource",
+		"name": "Vue Resource",
+		"dependencies": ["vue"]
+	},
+	{
+		"search_name": "vue-router",
+		"name": "Vue Router",
+		"dependencies": ["vue"]
+	},
+	{
+		"search_name": "vue-google-maps",
+		"name": "Vue Google Maps",
+		"dependencies": ["vue"]
+	},
+	{
+		"search_name": "vue-form",
+		"name": "Vue Form Validator",
+		"dependencies": ["vue"]
+	},
+	{
+		"search_name": "jquery",
+		"name": "jQuery"
+	},
+	{
+		"search_name": "angular.js",
+		"name": "AngularJS 1.x"
+	},
+	{
+		"search_name": "angular-ui-router",
+		"name": "AngularJS Router",
+		"dependencies": ["angular.js"]
+	},
+	{
+		"search_name": "angular-ui-bootstrap",
+		"name": "AngularJS Booststrap",
+		"dependencies": ["angular.js","twitter-bootstrap","jquery"]
+	},
+	{
+		"search_name": "backbone.js",
+		"name": "BackBone.JS",
+		"dependencies": ["jquery","underscore.js"]
+	},
+	{
+		"search_name": "react",
+		"name": "React"
+	},
+	{
+		"search_name": "ember.js",
+		"name": "Ember.js"
+	},
+	{
+		"search_name": "bulma",
+		"name": "Bulma"
+	},
+	{	
+		"search_name": "font-awesome",
+		"name": "Font-Awesome"
+	},
+	{
+		"search_name": "semantic-ui",
+		"name": "Semantic-UI"
+	},
+	{
+		"search_name": "skeleton",
+		"name": "Skeleton"
+	},
+	{
+		"search_name": "twitter-bootstrap",
+		"name": "Bootstrap",
+		"dependencies": ["jquery"]
+	},
+	{
+		"search_name": "require.js",
+		"name": "RequireJS"
+	},
+	{
+		"search_name": "moment.js",
+		"name": "MomentJS"
+	},
+	{
+		"search_name": "select2",
+		"name": "Select2",
+		"dependencies": ["jquery"]
+	},
+	{
+		"search_name": "bootstrap-select",
+		"name": "Boostrap Select",
+		"dependencies": ["twitter-bootstrap"]
+	},
+	{
+		"search_name": "normalize",
+		"name": "Normalize.css"
+	},
+	{
+		"search_name": "phaser",
+		"name": "Phaser"
+	},
+	{
+		"search_name": "underscore.js",
+		"name": "Underscore.js"
+	}
+]
