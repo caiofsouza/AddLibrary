@@ -10,11 +10,26 @@ try:
 except ImportError:
 	from urllib2 import urlopen, URLError
 
+def downloadLib(folder, lib):
+	if os.path.isdir(folder + '/libs') == False:
+		os.mkdir(folder + '/libs')
+
+	nf = GetLibThread(lib, folder)
+	nf.start()
+
+# global http get
+def httpGet(url):
+	request_obj = Request(url, method='GET')
+	req = urlopen(url=request_obj)
+	return req
+
+
 class AddLibrary(sublime_plugin.TextCommand):
 
 	def __init__(self, view):
 		self.view = view
 		self.window = sublime.active_window()
+		self.folder_path = self.window.folders()
 
 	def run(self, edit):
 		self.libraries_names = Libraries().getLibrariesName()
@@ -54,6 +69,7 @@ class SearchLibrary(sublime_plugin.TextCommand):
 		self.window = sublime.active_window()
 		self.result_arr = []
 		self.result_arr_list = []
+		self.lib_versions = []
 		self.searchURL = 'https://api.cdnjs.com/libraries?search='
 		self.install_on_folder = ''
 
@@ -72,25 +88,16 @@ class SearchLibrary(sublime_plugin.TextCommand):
 
 			self.window.show_quick_panel(self.result_arr_list, self.selectFindedLib)
 
-
 	def selectFindedLib(self, result_index):
-
 		if result_index > -1:
 
 			self.selected_lib = { 'search_name': self.result_arr[result_index], 'name': self.result_arr[result_index] }
-			self.folder_path = self.window.folders()
+
+			search_t = SearchLibVersions(self.result_arr[result_index])
+			search_t.start()
 
 			self.result_arr = []
 			self.result_arr_list = []
-			
-			# if have more than a active folder in sublime
-			if len(self.folder_path) > 1:
-				name_of_folders = self.folder_path
-
-				self.window.show_quick_panel(name_of_folders, self.selectFolder)
-			else:
-				self.install_on_folder = self.folder_path[0]
-				downloadLib(self.install_on_folder, self.selected_lib)
 
 
 	def selectFolder(self, folder_index):
@@ -145,7 +152,44 @@ class GetLibThread(threading.Thread):
 								file_path = lib_folder + '/' + file_name
 								new_f_t = newFileThread(latest_url, file_path, file_name)
 								new_f_t.start()
-								
+
+# get lib files via thread
+class GetLibVersionThread(threading.Thread):
+	def __init__(self, selected_lib, install_on, version):
+		self.selected_lib = selected_lib
+		self.install_on = install_on
+		self.target_version = version
+		self.apiRoot = 'https://api.cdnjs.com/libraries/'
+		self.apiSearch = self.apiRoot + self.selected_lib
+		self.cdnURL = 'https://cdnjs.cloudflare.com/ajax/libs/'
+
+		threading.Thread.__init__(self)
+
+	def run(self):
+		sublime.status_message("Downloading " + self.selected_lib + "...")
+
+		get_lib_req = httpGet(self.apiSearch).read().decode('utf-8')
+		lib_list = json.loads(get_lib_req)
+
+		lib_folder = self.install_on + '/libs/' + self.selected_lib + '-' + self.target_version
+
+		if os.path.isdir(self.install_on + '/libs/') == False:
+			os.mkdir(self.install_on + '/libs/')
+
+		if os.path.isdir(lib_folder) == False:
+			os.mkdir(lib_folder)
+
+		for assets in lib_list['assets']:
+			if assets['version'] == self.target_version:
+				for file_name in assets['files']:
+					# get the latest version
+					file_url = self.cdnURL + '/'+ self.selected_lib + '/' + self.target_version + '/' + file_name
+					
+					file_path = lib_folder + '/' + file_name
+					new_f_t = newFileThread(file_url, file_path, file_name)
+					new_f_t.start()
+
+
 							
 # create a file via thread		
 class newFileThread(threading.Thread):
@@ -168,6 +212,49 @@ class newFileThread(threading.Thread):
 		os.close( new_file )
 
 		sublime.status_message("File downloaded: " + self.file_name)
+
+class SearchLibVersions(threading.Thread):
+	def __init__(self, lib_name):
+		self.lib_name = lib_name
+		self.libraryURL = 'https://api.cdnjs.com/libraries/'
+		self.window = sublime.active_window()
+		self.folder_path = self.window.folders()
+		self.list_versions = []
+		threading.Thread.__init__(self)
+
+	def run(self):
+		versions_req = httpGet(self.libraryURL + self.lib_name).read().decode('utf-8')
+		self.lib_versions = json.loads(versions_req)
+		self.list_lib_versions = []
+		for version in self.lib_versions['assets']:
+			self.list_versions.append([ self.lib_versions['name'] + ' - version '+version['version'] ])
+			self.list_lib_versions.append(version['version'])
+
+		self.window.show_quick_panel(self.list_versions, self.installLibByVersion)
+
+	
+	def installLibByVersion(self, selected_version_index):
+		if selected_version_index > -1:
+			selected_version = self.list_lib_versions[selected_version_index]
+
+		self.folder_path = self.window.folders()
+		
+		# if have more than a active folder in sublime
+		if len(self.folder_path) > 1:
+			name_of_folders = self.folder_path
+
+			self.window.show_quick_panel(name_of_folders, self.selectFolder)
+		else:
+			self.install_on_folder = self.folder_path[0]
+			get_version_t = GetLibVersionThread(self.lib_name, self.install_on_folder, selected_version )
+			get_version_t.start()
+
+	def selectFolder(self, folder_index):
+		self.install_on_folder = self.folder_path[folder_index]
+		get_version_t = GetLibVersionThread(self.lib_name, self.install_on_folder, selected_version )
+		get_version_t.start()
+			
+
 
 def downloadLib(folder, lib):
 	if os.path.isdir(folder + '/libs') == False:
