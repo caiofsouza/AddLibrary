@@ -1,8 +1,6 @@
 # AddLibrary
 Add latest versions of css/js libraries in [Sublime Text](https://www.sublimetext.com/), searching for libraries hosted at CDN's and creating a folder called `libs` on the root of your folder, and downloading libs inside there. 
 
-## Installation
-If you have [Package Control](https://packagecontrol.io) installed on your Sublime Text, just use `Package Control: Install Package` via command palette and search for `AddLibrary`.
 
 ## Download manually
 - Download the files in `https://github.com/caiofsouza/AddLibrary` using the GitHub .zip download option
