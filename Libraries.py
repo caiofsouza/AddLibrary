@@ -12,8 +12,8 @@ except ImportError:
 class Libraries():
 
 	def __init__(self):
-		lib_json = open(sublime.packages_path() + '/AddLibrary/Libraries.json')
-		self.libraries = json.load(lib_json)
+		# lib_json = open(sublime.packages_path() + '/AddLibrary/Libraries.json')
+		self.libraries = json.loads(sublime.load_resource("Packages/AddLibrary/Libraries.json"))
 
 	def getLibrariesName(self):
 		r = []
