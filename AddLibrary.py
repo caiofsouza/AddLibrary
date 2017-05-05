@@ -11,10 +11,13 @@ except ImportError:
 	from urllib2 import urlopen, URLError
 
 def downloadLib(folder, lib):
-	if os.path.isdir(folder + '/libs') == False:
-		os.mkdir(folder + '/libs')
+	settings = sublime.load_settings("AddLibrary.sublime-settings") 
+	default_lib = settings.get("default_folder")
+	
+	if not os.path.exists(folder + default_lib):
+		os.makedirs(folder + default_lib)
 
-	nf = GetLibThread(lib, folder)
+	nf = GetLibThread(lib, folder + default_lib)
 	nf.start()
 
 # global http get
@@ -22,7 +25,6 @@ def httpGet(url):
 	request_obj = Request(url, method='GET')
 	req = urlopen(url=request_obj)
 	return req
-
 
 class AddLibrary(sublime_plugin.TextCommand):
 
@@ -135,7 +137,7 @@ class GetLibThread(threading.Thread):
 			# get the filename
 			file_name_by_url = get_latest['filename']
 
-			lib_folder = self.install_on + '/libs/' + get_latest['name'] + '-' + get_latest['version']
+			lib_folder = self.install_on + "/" + get_latest['name'] + '-' + get_latest['version']
 
 			# create the dir
 			if os.path.isdir(lib_folder) == False:
@@ -168,13 +170,17 @@ class GetLibVersionThread(threading.Thread):
 	def run(self):
 		sublime.status_message("Downloading " + self.selected_lib + "...")
 
+		settings = sublime.load_settings("AddLibrary.sublime-settings") 
+		default_lib = settings.get("default_folder")
+
 		get_lib_req = httpGet(self.apiSearch).read().decode('utf-8')
 		lib_list = json.loads(get_lib_req)
 
-		lib_folder = self.install_on + '/libs/' + self.selected_lib + '-' + self.target_version
+		# folder that lib will be
+		lib_folder = self.install_on + default_lib + "/" + self.selected_lib + '-' + self.target_version
 
-		if os.path.isdir(self.install_on + '/libs/') == False:
-			os.mkdir(self.install_on + '/libs/')
+		if os.path.isdir(self.install_on + default_lib) == False:
+			os.mkdir(self.install_on + default_lib)
 
 		if os.path.isdir(lib_folder) == False:
 			os.mkdir(lib_folder)
@@ -254,17 +260,3 @@ class SearchLibVersions(threading.Thread):
 		get_version_t = GetLibVersionThread(self.lib_name, self.install_on_folder, selected_version )
 		get_version_t.start()
 			
-
-
-def downloadLib(folder, lib):
-	if os.path.isdir(folder + '/libs') == False:
-		os.mkdir(folder + '/libs')
-
-	nf = GetLibThread(lib, folder)
-	nf.start()
-
-# global http get
-def httpGet(url):
-	request_obj = Request(url, method='GET')
-	req = urlopen(url=request_obj)
-	return req
