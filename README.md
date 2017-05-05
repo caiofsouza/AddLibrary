@@ -8,6 +8,10 @@ Add latest versions of css/js libraries in [Sublime Text](https://www.sublimetex
 - Find your Packages directory using the menu item `Preferences -> Browse Packages...`
 - Copy the folder into your Sublime Text Packages directory
 
+## Settings 
+To edit go to `Preferences -> Package Settings -> AddLibrary` and change `default_folder` setting.
+Remember, the root of this new path is your opened folder.
+
 ## Commands
 - `[ctrl+alt+f]` or `Command palette + '[AddLibrary]: Search Library'`: Input a term for query libraries with that name and list the finded libraries, selecting the version of the lib
 - `[ctrl+alt+a]` or `Command palette + '[AddLibrary]: Add Library'`: List some famous libraries to add to your project with your dependencies
